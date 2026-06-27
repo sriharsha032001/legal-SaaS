@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.106.0",
+    "@google/generative-ai": "^0.24.1",
     "docxtemplater": "^3.69.0",
     "lucide-react": "^1.21.0",
     "mammoth": "^1.12.0",

@@ -32,6 +32,7 @@ export default function Home() {
   const [downloadName, setDownloadName] = useState<string>("updated_document.docx");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showCamera, setShowCamera] = useState(false);
+  const [selectedProvider, setSelectedProvider] = useState<"openai" | "anthropic" | "google">("openai");
 
   // ── Helpers ────────────────────────────────────────────────────────────
   let logCounter = 0;
@@ -101,6 +102,7 @@ export default function Home() {
 
     const formData = new FormData();
     formData.append("template", templateFiles[0]);
+    formData.append("provider", selectedProvider);
     for (const file of supportingFiles) {
       formData.append("supporting", file);
     }
@@ -201,6 +203,29 @@ export default function Home() {
               <h1 className="text-lg font-bold tracking-tight">LegalDoc AI</h1>
               <p className="text-xs text-white/40">Automated Legal Opinion Generator</p>
             </div>
+          </div>
+
+          {/* Model selection toggle */}
+          <div className="flex items-center gap-1 rounded-xl bg-white/5 p-1">
+            {[
+              { id: "openai", label: "GPT-4o", color: "hover:text-emerald-400" },
+              { id: "anthropic", label: "Claude 3.5", color: "hover:text-amber-400" },
+              { id: "google", label: "Gemini Pro", color: "hover:text-blue-400" },
+            ].map((p) => (
+              <button
+                key={p.id}
+                onClick={() => setSelectedProvider(p.id as any)}
+                className={`
+                  rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200
+                  ${selectedProvider === p.id
+                    ? "bg-white/10 text-white shadow-sm"
+                    : `text-white/40 ${p.color}`
+                  }
+                `}
+              >
+                {p.label}
+              </button>
+            ))}
           </div>
 
           {/* Status pill */}

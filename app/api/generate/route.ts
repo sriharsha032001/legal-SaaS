@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
 
         // ── 1. Parse multipart form data ──────────────────────────────────────
         const formData = await request.formData();
+        const provider = (formData.get("provider") as string) || "openai";
 
         const templateFile = formData.get("template") as File | null;
         if (!templateFile) {
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
         });
 
         addLog(
-            `Found template: "${templateFile.name}" and ${supportingFiles.length} supporting document(s).`,
+            `Provider: ${provider}. Found template: "${templateFile.name}" and ${supportingFiles.length} supporting document(s).`,
             "info"
         );
 
@@ -106,7 +107,7 @@ export async function POST(request: NextRequest) {
                     mimeType.startsWith("image/") ||
                     /\.(jpg|jpeg|png)$/i.test(name)
                 ) {
-                    // Image — send to GPT-4o Vision
+                    // Image — send to AI
                     const dataUri = imageToBase64DataUri(buffer, mimeType || "image/jpeg");
                     supportingInputs.push({ name, type: "image", content: dataUri });
                     addLog(`✓ Image prepared for vision analysis: ${name}`, "success");
@@ -121,9 +122,10 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        // ── 4. Call GPT-4o ─────────────────────────────────────────────────────
-        addLog("Sending all documents to AI for analysis…", "info");
+        // ── 4. Call AI Service ───────────────────────────────────────────────────
+        addLog(`Sending all documents to ${provider} for analysis…`, "info");
         const patch = await generateDocumentPatch(
+            provider as any,
             templateText,
             supportingInputs,
             ({ message, type }) => addLog(message, type)
