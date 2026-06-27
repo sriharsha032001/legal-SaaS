@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Required for pdf-parse and mammoth which use Node.js built-ins
+  serverExternalPackages: ["pdf-parse", "mammoth"],
 };
 
 export default nextConfig;
